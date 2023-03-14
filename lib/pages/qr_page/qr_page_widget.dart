@@ -109,7 +109,7 @@ class _QrPageWidgetState extends State<QrPageWidget> {
                         ),
                         FFButtonWidget(
                           onPressed: () {
-                            print('Button pressed ...');
+                            debugPrint('Button pressed ...');
                           },
                           text: 'Generate',
                           options: FFButtonOptions(

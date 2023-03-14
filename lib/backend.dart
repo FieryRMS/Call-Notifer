@@ -1,11 +1,12 @@
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class ParseService {
-  static const keyApplicationId = 'YOUR_APP_ID_HERE';
-  static const keyClientKey = 'YOUR_CLIENT_KEY_HERE';
+  static const keyApplicationId = '6YYotmIpM1PRp6dy9f8bjOgIROLZ0Eww4gjDo2Rc';
+  static const keyClientKey = 'wbGj2FK3Y3XPi8HHNswAb6afYZq7NkAZvCQ0MQ8M';
   static const keyParseServerUrl = 'https://parseapi.back4app.com';
   static const liveQueryUrl = 'https://back4app.b4a.io';
   static const success = "success";
+  static bool isInitialized = false;
 
   static Future<bool> isLoggedIn() async =>
       (await ParseUser.currentUser()) != null;
@@ -15,8 +16,8 @@ class ParseService {
         clientKey: keyClientKey,
         liveQueryUrl: liveQueryUrl,
         autoSendSessionId: true,
-        debug: true,
-        coreStore: await CoreStoreSembastImp.getInstance());
+        debug: true);
+    isInitialized = true;
   }
 
   static Future<String> login(String username, String password) async {

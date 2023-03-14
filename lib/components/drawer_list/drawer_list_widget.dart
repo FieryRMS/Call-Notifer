@@ -49,7 +49,7 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
                 padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
                 child: FFButtonWidget(
                   onPressed: () async {
-                    print(ModalRoute.of(context)?.settings.name);
+                    debugPrint(ModalRoute.of(context)?.settings.name);
                     Navigator.pushNamed(context, '/notif_list');
                   },
                   text: 'Home',
@@ -120,7 +120,7 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
                   );
 
                   setState(() {});
-                  print(_model.qrCodeScanResult);
+                  debugPrint(_model.qrCodeScanResult);
                 },
                 text: 'Scan QR Code',
                 icon: const Icon(
