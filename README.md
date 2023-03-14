@@ -1,6 +1,6 @@
-# call_notifier
+# Call-Notifer
 
-A new Flutter project.
+An app that will notifer the users about calls of other users
 
 ## Getting Started
 
