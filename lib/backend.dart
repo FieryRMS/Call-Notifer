@@ -4,7 +4,7 @@ class ParseService {
   static const keyApplicationId = '6YYotmIpM1PRp6dy9f8bjOgIROLZ0Eww4gjDo2Rc';
   static const keyClientKey = 'wbGj2FK3Y3XPi8HHNswAb6afYZq7NkAZvCQ0MQ8M';
   static const keyParseServerUrl = 'https://parseapi.back4app.com';
-  static const liveQueryUrl = 'https://back4app.b4a.io';
+  static const liveQueryUrl = 'wss://callnotifier.b4a.io';
   static const success = "success";
   static bool isInitialized = false;
 

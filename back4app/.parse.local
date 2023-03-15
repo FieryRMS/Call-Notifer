@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "Call Notifier": {
+      "applicationId": "6YYotmIpM1PRp6dy9f8bjOgIROLZ0Eww4gjDo2Rc"
+    },
+    "_default": {
+      "link": "Call Notifier"
+    }
+  }
+}
