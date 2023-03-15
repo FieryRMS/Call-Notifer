@@ -8,8 +8,19 @@ class ParseService {
   static const success = "success";
   static bool isInitialized = false;
 
-  static Future<bool> isLoggedIn() async =>
-      (await ParseUser.currentUser()) != null;
+  static Future<bool> isLoggedIn() async {
+    ParseUser? localUser = await ParseUser.currentUser();
+    if (localUser == null) return false;
+
+    ParseResponse? verifiedUser =
+        await ParseUser.getCurrentUserFromServer(localUser.get("sessionToken"));
+    if (verifiedUser != null && verifiedUser.success) {
+      return true;
+    } else {
+      await localUser.logout();
+      return false;
+    }
+  }
 
   static init() async {
     await Parse().initialize(keyApplicationId, keyParseServerUrl,
@@ -31,7 +42,16 @@ class ParseService {
 
   static Future<String> signup(String username, String password) async {
     final user = ParseUser(username, password, null);
-    final response = await user.signUp();
+    final response = await user.signUp(allowWithoutEmail: true);
+    if (response.success) {
+      return success;
+    }
+    throw response.error!.message;
+  }
+
+  static Future<String> logout() async {
+    ParseUser? localUser = await ParseUser.currentUser();
+    ParseResponse response = await localUser!.logout();
     if (response.success) {
       return success;
     }

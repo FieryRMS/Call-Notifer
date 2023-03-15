@@ -2,6 +2,7 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
+import '/backend.dart';
 
 import 'login_page_model.dart';
 export 'login_page_model.dart';
@@ -104,7 +105,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                           child: TabBarView(
                             children: [
                               Form(
-                                key: _model.formKey1,
+                                key: _model.loginFormKey,
                                 child: Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
                                       24, 24, 24, 0),
@@ -115,6 +116,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(20, 20, 20, 0),
                                         child: TextFormField(
+                                          textInputAction: TextInputAction.next,
                                           autovalidateMode: AutovalidateMode
                                               .onUserInteraction,
                                           controller: _model.usernameController,
@@ -200,6 +202,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(20, 12, 20, 0),
                                         child: TextFormField(
+                                          textInputAction: TextInputAction.done,
                                           autovalidateMode: AutovalidateMode
                                               .onUserInteraction,
                                           controller: _model.passwordController,
@@ -304,12 +307,31 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                             .fromSTEB(0, 24, 0, 0),
                                         child: FFButtonWidget(
                                           onPressed: () async {
-                                            if (_model.formKey1.currentState ==
+                                            final nagivator =
+                                                Navigator.of(context);
+
+                                            if (_model.loginFormKey
+                                                        .currentState ==
                                                     null ||
-                                                !_model.formKey1.currentState!
+                                                !_model
+                                                    .loginFormKey.currentState!
                                                     .validate()) {
                                               return;
                                             }
+                                            try {
+                                              await ParseService.login(
+                                                  _model
+                                                      .usernameController.text,
+                                                  _model
+                                                      .passwordController.text);
+                                            } catch (e) {
+                                              showSnackbar(
+                                                  context, e.toString());
+                                              return;
+                                            }
+                                            nagivator.pushNamedAndRemoveUntil(
+                                                '/notif_list',
+                                                (route) => false);
                                           },
                                           text: 'Sign In',
                                           options: FFButtonOptions(
@@ -344,7 +366,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                 ),
                               ),
                               Form(
-                                key: _model.formKey2,
+                                key: _model.signUpFormKey,
                                 child: Padding(
                                   padding: const EdgeInsetsDirectional.fromSTEB(
                                       24, 24, 24, 0),
@@ -355,6 +377,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(20, 20, 20, 0),
                                         child: TextFormField(
+                                          textInputAction: TextInputAction.next,
                                           autovalidateMode: AutovalidateMode
                                               .onUserInteraction,
                                           controller:
@@ -441,6 +464,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(20, 12, 20, 0),
                                         child: TextFormField(
+                                          textInputAction: TextInputAction.next,
                                           autovalidateMode: AutovalidateMode
                                               .onUserInteraction,
                                           controller:
@@ -546,6 +570,7 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(20, 12, 20, 0),
                                         child: TextFormField(
+                                          textInputAction: TextInputAction.done,
                                           autovalidateMode: AutovalidateMode
                                               .onUserInteraction,
                                           controller:
@@ -653,12 +678,33 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                             .fromSTEB(0, 24, 0, 0),
                                         child: FFButtonWidget(
                                           onPressed: () async {
-                                            if (_model.formKey2.currentState ==
+                                            final navigator = Navigator.of(
+                                                context,
+                                                rootNavigator: true);
+                                            if (_model.signUpFormKey
+                                                        .currentState ==
                                                     null ||
-                                                !_model.formKey2.currentState!
+                                                !_model
+                                                    .signUpFormKey.currentState!
                                                     .validate()) {
                                               return;
                                             }
+                                            try {
+                                              await ParseService.signup(
+                                                  _model
+                                                      .usernameCreateController
+                                                      .text,
+                                                  _model
+                                                      .passwordConfirmController
+                                                      .text);
+                                            } catch (e) {
+                                              showSnackbar(
+                                                  context, e.toString());
+                                              return;
+                                            }
+                                            navigator.pushNamedAndRemoveUntil(
+                                                '/notif_list',
+                                                (route) => false);
                                           },
                                           text: 'Create Account',
                                           options: FFButtonOptions(

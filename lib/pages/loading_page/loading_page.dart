@@ -23,7 +23,7 @@ class _LoadingPageWidgetState extends State<LoadingPageWidget> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final navigator = Navigator.of(context);
+      final navigator = Navigator.of(context, rootNavigator: true);
       if (!ParseService.isInitialized) await ParseService.init();
 
       if (await ParseService.isLoggedIn()) {

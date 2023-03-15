@@ -1,3 +1,5 @@
+import 'package:call_notifier/backend.dart';
+
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -180,7 +182,16 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
               padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 5),
               child: FFButtonWidget(
                 onPressed: () async {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  final navigator = Navigator.of(context);
+                  try {
+                    await ParseService.logout();
+                  } catch (e) {
+                    showSnackbar(context, e.toString());
+                  }
+                  if (!await ParseService.isLoggedIn()) {
+                    navigator.pushNamedAndRemoveUntil(
+                        '/login_page', (r) => false);
+                  }
                 },
                 text: 'Logout',
                 icon: const Icon(

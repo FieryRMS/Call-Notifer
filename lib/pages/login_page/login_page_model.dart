@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 class LoginPageModel extends FlutterFlowModel {
   ///  State fields for stateful widgets in this page.
 
-  final formKey1 = GlobalKey<FormState>();
-  final formKey2 = GlobalKey<FormState>();
+  final loginFormKey = GlobalKey<FormState>();
+  final signUpFormKey = GlobalKey<FormState>();
   // State field(s) for username widget.
   TextEditingController? usernameController;
   String? Function(BuildContext, String?)? usernameControllerValidator;
@@ -37,6 +37,10 @@ class LoginPageModel extends FlutterFlowModel {
       return 'Requires at least 6 characters.';
     }
 
+    if (val.contains(usernameController?.text ?? '')) {
+      return 'Password cannot contain username.';
+    }
+
     return null;
   }
 
@@ -65,7 +69,19 @@ class LoginPageModel extends FlutterFlowModel {
   String? Function(BuildContext, String?)? passwordCreateControllerValidator;
   String? _passwordCreateControllerValidator(
       BuildContext context, String? val) {
-    return _passwordControllerValidator(context, val);
+    if (val == null || val.isEmpty) {
+      return 'Field is required';
+    }
+
+    if (val.runes.length < 6) {
+      return 'Requires at least 6 characters.';
+    }
+
+    if (val.contains(usernameCreateController?.text ?? '')) {
+      return 'Password cannot contain username.';
+    }
+
+    return null;
   }
 
   // State field(s) for password-Confirm widget.
@@ -87,6 +103,7 @@ class LoginPageModel extends FlutterFlowModel {
 
   /// Initialization and disposal methods.
 
+  @override
   void initState(BuildContext context) {
     usernameControllerValidator = _usernameControllerValidator;
     passwordVisibility = false;

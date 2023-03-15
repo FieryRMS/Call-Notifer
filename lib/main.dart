@@ -7,12 +7,23 @@ import 'pages/loading_page/loading_page.dart';
 
 main() {
   runApp(
-    MaterialApp(title: "Phone State", initialRoute: '/', routes: {
-      '/': (context) => const LoadingPageWidget(),
-      '/login_page': (context) => const LoginPageWidget(),
-      '/manage_users': (context) => const ManageUsersWidget(),
-      '/notif_list': (context) => const NotifListWidget(),
-      '/qr_page': (context) => const QrPageWidget(),
-    }),
+    MaterialApp(
+      title: "Phone State",
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LoadingPageWidget(),
+        '/login_page': (context) => const LoginPageWidget(),
+        '/manage_users': (context) => const ManageUsersWidget(),
+        '/notif_list': (context) => const NotifListWidget(),
+        '/qr_page': (context) => const QrPageWidget(),
+      },
+      onUnknownRoute: (settings) => MaterialPageRoute(
+        builder: (context) => Scaffold(
+          body: Center(
+            child: Text('No route defined for ${settings.name}'),
+          ),
+        ),
+      ),
+    ),
   );
 }
