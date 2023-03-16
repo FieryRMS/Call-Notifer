@@ -11,7 +11,7 @@ class ListItemWidget extends StatefulWidget {
     Key? key,
     this.callType,
     this.phoneNumber,
-    this.callName,
+    this.callerName,
     this.username,
     this.onGoing,
     this.timeStamp,
@@ -19,7 +19,7 @@ class ListItemWidget extends StatefulWidget {
 
   final String? callType;
   final String? phoneNumber;
-  final String? callName;
+  final String? callerName;
   final String? username;
   final bool? onGoing;
   final DateTime? timeStamp;
@@ -64,11 +64,30 @@ class _ListItemWidgetState extends State<ListItemWidget> {
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: [
-              const Icon(
-                Icons.call_made,
-                color: Colors.black,
-                size: 24,
-              ),
+              if (widget.callType == 'incoming')
+                const Icon(
+                  Icons.call_received,
+                  color: Colors.black,
+                  size: 24,
+                )
+              else if (widget.callType == 'outgoing')
+                const Icon(
+                  Icons.call_made,
+                  color: Colors.black,
+                  size: 24,
+                )
+              else if (widget.callType == 'missed')
+                const Icon(
+                  Icons.call_missed,
+                  color: Colors.black,
+                  size: 24,
+                )
+              else
+                const Icon(
+                  Icons.call,
+                  color: Colors.black,
+                  size: 24,
+                ),
               const SizedBox(
                 height: 100,
                 child: VerticalDivider(
@@ -78,7 +97,7 @@ class _ListItemWidgetState extends State<ListItemWidget> {
               Expanded(
                 child: Html(
                   data:
-                      '<p><strong><span style="font-size:20px">${widget.phoneNumber}</span></strong></p> <p><span style="font-size:16px">${widget.callName} @${widget.username}</span><br/> <span style="color:#7f8c8d; font-size:12px">&bull; ${dateTimeFormat('relative', widget.timeStamp)}</span> </p>',
+                      '<p><strong><span style="font-size:20px">${widget.phoneNumber}</span></strong></p> <p><span style="font-size:16px">${widget.callerName} @${widget.username}</span><br/> <span style="color:#7f8c8d; font-size:12px">${dateTimeFormat(widget.timeStamp)}</span> </p>',
                 ),
               ),
             ],

@@ -6,6 +6,7 @@ class ParseService {
   static const keyParseServerUrl = 'https://parseapi.back4app.com';
   static const liveQueryUrl = 'wss://callnotifier.b4a.io';
   static const success = "success";
+  static ParseUser currentUser = ParseUser('', '', '');
   static bool isInitialized = false;
 
   static Future<bool> isLoggedIn() async {
@@ -15,6 +16,7 @@ class ParseService {
     ParseResponse? verifiedUser =
         await ParseUser.getCurrentUserFromServer(localUser.get("sessionToken"));
     if (verifiedUser != null && verifiedUser.success) {
+      currentUser = verifiedUser.results!.first as ParseUser;
       return true;
     } else {
       await localUser.logout();
@@ -35,6 +37,7 @@ class ParseService {
     final user = ParseUser(username, password, null);
     final response = await user.login();
     if (response.success) {
+      currentUser = response.results!.first as ParseUser;
       return success;
     }
     throw response.error!;
@@ -44,6 +47,7 @@ class ParseService {
     final user = ParseUser(username, password, null);
     final response = await user.signUp(allowWithoutEmail: true);
     if (response.success) {
+      currentUser = response.results!.first as ParseUser;
       return success;
     }
     throw response.error!;
@@ -53,6 +57,7 @@ class ParseService {
     ParseUser? localUser = await ParseUser.currentUser();
     ParseResponse response = await localUser!.logout();
     if (response.success) {
+      currentUser = ParseUser('', '', '');
       return success;
     }
     throw response.error!;

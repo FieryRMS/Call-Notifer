@@ -8,6 +8,22 @@ Parse.Cloud.beforeSave(Parse.User, async (request) => {
 	}
 });
 
+Parse.Cloud.beforeSave("CallLogs", async (request) => {
+	if (request.object.isNew()) {
+		if (request.user == null) throw "Not logged in";
+		let ACL = new Parse.ACL(request.user);
+		ACL.setRoleReadAccess(request.user.get("ownsRole"), true);
+		request.object.setACL(ACL);
+		request.object.set("owner", request.user.getUsername());
+	}
+	else if(!request.master) {
+		let denyCols = ["ACL", "callerName", "callType", "phoneNumber", "owner"];
+		for (let col of denyCols) {
+			if (request.object.dirty(col)) throw "Cannot change " + col;
+		}
+	}
+});
+
 Parse.Cloud.afterSave(Parse.User, async (request) => {
 	if (request.object.existed()) return;
 
@@ -37,24 +53,24 @@ Parse.Cloud.define("generateOTP", async (request) => {
 Parse.Cloud.define("verifyOTP", async (request) => {
 	let code = request.params.otp;
 	if (request.user == null) throw "Not logged in";
-	if(code == null) throw "No OTP provided";
+	if (code == null) throw "No OTP provided";
 
 	let OTP = await new Parse.Query("OTP")
-					.equalTo("objectId", code)
-					.include("addTo")
-					.first({ useMasterKey: true });
+		.equalTo("objectId", code)
+		.include("addTo")
+		.first({ useMasterKey: true });
 	if (OTP == null) throw "Invalid OTP!";
 
 	if (OTP.get("expires") < new Date()) {
 		await OTP.destroy({ useMasterKey: true });
 		throw "OTP expired";
 	}
-	
+
 	let role = request.user.get("ownsRole");
 	if (OTP.get("addTo").id == role.id) throw "Cannot subscribe to self, please create another account";
 
 	await OTP.get("addTo").getUsers().add(request.user);
 	await OTP.get("addTo").save({}, { useMasterKey: true });
 	await OTP.destroy({ useMasterKey: true });
-	return "Successfully subscribed to " + OTP.get("addTo").get("name")+"!";
+	return "Successfully subscribed to " + OTP.get("addTo").get("name") + "!";
 });
