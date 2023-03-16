@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 
 class DrawerListModel extends FlutterFlowModel {
   ///  State fields for stateful widgets in this component.
-
-  var qrCodeScanResult = '';
-
   /// Initialization and disposal methods.
 
   @override

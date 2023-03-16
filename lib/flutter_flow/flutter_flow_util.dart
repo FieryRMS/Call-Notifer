@@ -189,7 +189,7 @@ void showSnackbar(
                 ),
               ),
             ),
-          Text(message),
+          Flexible(child: Text(message)),
         ],
       ),
       duration: Duration(seconds: duration),

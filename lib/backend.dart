@@ -37,7 +37,7 @@ class ParseService {
     if (response.success) {
       return success;
     }
-    throw response.error!.message;
+    throw response.error!;
   }
 
   static Future<String> signup(String username, String password) async {
@@ -46,7 +46,7 @@ class ParseService {
     if (response.success) {
       return success;
     }
-    throw response.error!.message;
+    throw response.error!;
   }
 
   static Future<String> logout() async {
@@ -55,7 +55,7 @@ class ParseService {
     if (response.success) {
       return success;
     }
-    throw response.error!.message;
+    throw response.error!;
   }
 
   static Future<String> generateOTP() async {
@@ -63,16 +63,16 @@ class ParseService {
     if (response.success) {
       return response.result as String;
     }
-    throw response.error!.message;
+    throw response.error!;
   }
 
-  static Future<bool> verifyOTP(String otp) async {
+  static Future<String> verifyOTP(String otp) async {
     final response = await ParseCloudFunction('verifyOTP').execute(
       parameters: <String, String>{'otp': otp},
     );
     if (response.success) {
-      return true;
+      return response.result;
     }
-    throw response.error!.message;
+    throw response.error!;
   }
 }

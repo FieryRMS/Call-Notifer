@@ -4,6 +4,7 @@ import 'pages/manage_users/manage_users.dart';
 import 'pages/notif_list/notif_list.dart';
 import 'pages/qr_page/qr_page_widget.dart';
 import 'pages/loading_page/loading_page.dart';
+import 'pages/qr_scanner/qr_scanner_widget.dart';
 
 main() {
   runApp(
@@ -16,6 +17,7 @@ main() {
         '/manage_users': (context) => const ManageUsersWidget(),
         '/notif_list': (context) => const NotifListWidget(),
         '/qr_page': (context) => const QrPageWidget(),
+        '/qr_scanner': (context) => const QrScannerWidget(),
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => Scaffold(

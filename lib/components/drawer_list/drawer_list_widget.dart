@@ -1,16 +1,19 @@
-import 'package:call_notifier/backend.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
+import '/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 import 'drawer_list_model.dart';
 export 'drawer_list_model.dart';
 
 class DrawerListWidget extends StatefulWidget {
-  const DrawerListWidget({Key? key}) : super(key: key);
+  const DrawerListWidget({Key? key, required this.scaffoldKey})
+      : super(key: key);
+
+  final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
   createState() => _DrawerListWidgetState();
@@ -50,8 +53,8 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
                 child: FFButtonWidget(
-                  onPressed: () async {
-                    debugPrint(ModalRoute.of(context)?.settings.name);
+                  onPressed: () {
+                    widget.scaffoldKey.currentState!.closeDrawer();
                     Navigator.pushNamed(context, '/notif_list');
                   },
                   text: 'Home',
@@ -82,7 +85,8 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
                 child: FFButtonWidget(
-                  onPressed: () async {
+                  onPressed: () {
+                    widget.scaffoldKey.currentState!.closeDrawer();
                     Navigator.pushNamed(context, '/qr_page');
                   },
                   text: 'Generate QR Code',
@@ -113,16 +117,31 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
               padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
               child: FFButtonWidget(
                 onPressed: () async {
-                  _model.qrCodeScanResult =
-                      await FlutterBarcodeScanner.scanBarcode(
-                    '#C62828', // scanning line color
-                    'Cancel', // cancel button text
-                    true, // whether to show the flash icon
-                    ScanMode.QR,
-                  );
+                  var qrCodeScanResult = await Navigator.of(context)
+                      .pushNamed("/qr_scanner") as String?;
+                  if (qrCodeScanResult == null) return;
+                  String verificationResult;
+                  try {
+                    verificationResult =
+                        await ParseService.verifyOTP(qrCodeScanResult);
+                  } on ParseError catch (e) {
+                    if (context.mounted) {
+                      widget.scaffoldKey.currentState!.closeDrawer();
+                      showSnackbar(context, e.message);
 
-                  setState(() {});
-                  debugPrint(_model.qrCodeScanResult);
+                      final navigator = Navigator.of(context);
+                      if (e.code == ParseError.invalidSessionToken) {
+                        await ParseService.logout();
+                        navigator.pushNamedAndRemoveUntil(
+                            '/login_page', (r) => false);
+                      }
+                    }
+                    return;
+                  }
+                  if (context.mounted) {
+                    widget.scaffoldKey.currentState!.closeDrawer();
+                    showSnackbar(context, verificationResult);
+                  }
                 },
                 text: 'Scan QR Code',
                 icon: const Icon(
@@ -151,7 +170,9 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 5),
                 child: FFButtonWidget(
-                  onPressed: () async {
+                  onPressed: () {
+                    widget.scaffoldKey.currentState!.closeDrawer();
+
                     Navigator.pushNamed(context, '/manage_users');
                   },
                   text: 'Manage Users',
@@ -185,8 +206,8 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
                   final navigator = Navigator.of(context);
                   try {
                     await ParseService.logout();
-                  } catch (e) {
-                    showSnackbar(context, e.toString());
+                  } on ParseError catch (e) {
+                    showSnackbar(context, e.message);
                   }
                   if (!await ParseService.isLoggedIn()) {
                     navigator.pushNamedAndRemoveUntil(

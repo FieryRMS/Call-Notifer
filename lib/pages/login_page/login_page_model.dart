@@ -115,6 +115,7 @@ class LoginPageModel extends FlutterFlowModel {
     passwordConfirmControllerValidator = _passwordConfirmControllerValidator;
   }
 
+  @override
   void dispose() {
     usernameController?.dispose();
     passwordController?.dispose();

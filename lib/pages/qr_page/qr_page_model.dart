@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class QrPageModel extends FlutterFlowModel {
   ///  State fields for stateful widgets in this page.
 
+  String? apiResult;
   // Model for DrawerList component.
   late DrawerListModel drawerListModel;
 

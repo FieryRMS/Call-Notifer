@@ -1,3 +1,5 @@
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -53,22 +55,25 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(0, 24, 0, 24),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Call Notifier',
-                      style: FlutterFlowTheme.of(context).bodyText1.override(
-                            fontFamily: 'Poppins',
-                            fontSize: 45,
-                          ),
-                    ),
-                  ],
+              if (MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).viewInsets.bottom >
+                  560)
+                Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(0, 24, 0, 24),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Call Notifier',
+                        style: FlutterFlowTheme.of(context).bodyText1.override(
+                              fontFamily: 'Poppins',
+                              fontSize: 45,
+                            ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
@@ -324,9 +329,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                       .usernameController.text,
                                                   _model
                                                       .passwordController.text);
-                                            } catch (e) {
-                                              showSnackbar(
-                                                  context, e.toString());
+                                            } on ParseError catch (e) {
+                                              showSnackbar(context, e.message);
                                               return;
                                             }
                                             nagivator.pushNamedAndRemoveUntil(
@@ -697,9 +701,8 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
                                                   _model
                                                       .passwordConfirmController
                                                       .text);
-                                            } catch (e) {
-                                              showSnackbar(
-                                                  context, e.toString());
+                                            } on ParseError catch (e) {
+                                              showSnackbar(context, e.message);
                                               return;
                                             }
                                             navigator.pushNamedAndRemoveUntil(

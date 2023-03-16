@@ -1,3 +1,5 @@
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+
 import '/components/drawer_list/drawer_list_widget.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -5,6 +7,7 @@ import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
+import '/backend.dart';
 
 import 'qr_page_model.dart';
 export 'qr_page_model.dart';
@@ -46,7 +49,7 @@ class _QrPageWidgetState extends State<QrPageWidget> {
         child: wrapWithModel(
           model: _model.drawerListModel,
           updateCallback: () => setState(() {}),
-          child: const DrawerListWidget(),
+          child: DrawerListWidget(scaffoldKey: scaffoldKey),
         ),
       ),
       appBar: AppBar(
@@ -108,8 +111,27 @@ class _QrPageWidgetState extends State<QrPageWidget> {
                           thickness: 1,
                         ),
                         FFButtonWidget(
-                          onPressed: () {
-                            debugPrint('Button pressed ...');
+                          onPressed: () async {
+                            try {
+                              _model.apiResult =
+                                  await ParseService.generateOTP();
+                              setState(() {});
+                              if (context.mounted) {
+                                showSnackbar(context,
+                                    "OTP Generated! Expires in 5 minutes");
+                              }
+                            } on ParseError catch (e) {
+                              if (context.mounted) {
+                                showSnackbar(context, e.message);
+                                final naigator = Navigator.of(context);
+                                if (e.code == ParseError.invalidSessionToken) {
+                                  await ParseService.logout();
+                                  naigator.pushNamedAndRemoveUntil(
+                                      '/login_page', (r) => false);
+                                }
+                              }
+                              return;
+                            }
                           },
                           text: 'Generate',
                           options: FFButtonOptions(
@@ -144,13 +166,13 @@ class _QrPageWidgetState extends State<QrPageWidget> {
                               padding: const EdgeInsetsDirectional.fromSTEB(
                                   20, 20, 20, 20),
                               child: BarcodeWidget(
-                                data: 'Barcode',
+                                data: (_model.apiResult ?? "NULL").toString(),
                                 barcode: Barcode.qrCode(),
                                 width: 0,
                                 height: 0,
                                 color: Colors.black,
                                 backgroundColor: Colors.transparent,
-                                errorBuilder: (_context, _error) =>
+                                errorBuilder: (context, error) =>
                                     const SizedBox(
                                   width: 0,
                                   height: 0,

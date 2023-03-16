@@ -45,7 +45,7 @@ class _NotifListWidgetState extends State<NotifListWidget> {
         child: wrapWithModel(
           model: _model.drawerListModel,
           updateCallback: () => setState(() {}),
-          child: const DrawerListWidget(),
+          child: DrawerListWidget(scaffoldKey: scaffoldKey),
         ),
       ),
       appBar: AppBar(
