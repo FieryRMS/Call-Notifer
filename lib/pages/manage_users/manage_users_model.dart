@@ -7,6 +7,7 @@ class ManageUsersModel extends FlutterFlowModel {
 
   // Model for DrawerList component.
   late DrawerListModel drawerListModel;
+  late Future<List<String>> usernamesFuture;
 
   /// Initialization and disposal methods.
 

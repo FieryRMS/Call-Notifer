@@ -80,4 +80,22 @@ class ParseService {
     }
     throw response.error!;
   }
+
+  static Future<List<String>> getSubscribedUsers() async {
+    final response = await ParseCloudFunction('getSubscribedUsers').execute();
+    if (response.success) {
+      return List<String>.from(response.result);
+    }
+    throw response.error!;
+  }
+
+  static Future<bool> unsubscribeUser(String username) async {
+    final response = await ParseCloudFunction('unsubscribeUser').execute(
+      parameters: <String, String>{'username': username},
+    );
+    if (response.success) {
+      return true;
+    }
+    throw response.error!;
+  }
 }

@@ -105,10 +105,11 @@ class _NotifListWidgetState extends State<NotifListWidget> {
                           context, '/login_page', (r) => false);
                     }
                     showSnackbar(context, snapshot.error!.message);
-                    return const Text(
+                    return const Center(
+                        child: Text(
                       'something went wrong!',
                       style: TextStyle(color: Colors.red),
-                    );
+                    ));
                   }
                   if (snapshot.hasData) {
                     return ListItemWidget(
