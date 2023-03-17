@@ -44,11 +44,51 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(5, 65, 5, 0),
+        padding: const EdgeInsetsDirectional.fromSTEB(5, 50, 5, 0),
         child: ListView(
           padding: EdgeInsets.zero,
           scrollDirection: Axis.vertical,
           children: [
+            Card(
+              elevation: 5,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(5, 0, 5, 0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.black,
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.person,
+                        color: Colors.black,
+                        size: 45,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 60,
+                      child: VerticalDivider(
+                        thickness: 1,
+                      ),
+                    ),
+                    Text(
+                      ParseService.currentUser.username!,
+                      style: FlutterFlowTheme.of(context).bodyText1.override(
+                            fontFamily: 'Poppins',
+                            fontSize: 20,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             if (ModalRoute.of(context)?.settings.name != '/notif_list')
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
@@ -141,6 +181,11 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
                   if (context.mounted) {
                     widget.scaffoldKey.currentState!.closeDrawer();
                     showSnackbar(context, verificationResult);
+                    // refresh hack
+                    if (ModalRoute.of(context)?.settings.name !=
+                        '/notif_list') {
+                      Navigator.pushReplacementNamed(context, '/notif_list');
+                    }
                   }
                 },
                 text: 'Scan QR Code',
@@ -200,7 +245,7 @@ class _DrawerListWidgetState extends State<DrawerListWidget> {
                 ),
               ),
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(0, 10, 0, 5),
+              padding: const EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
               child: FFButtonWidget(
                 onPressed: () async {
                   final navigator = Navigator.of(context);

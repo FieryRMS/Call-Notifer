@@ -19,6 +19,7 @@ class NotifListWidget extends StatefulWidget {
 
 class _NotifListWidgetState extends State<NotifListWidget> {
   late NotifListModel _model;
+  var lzloading = true;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final _unfocusNode = FocusNode();
@@ -85,6 +86,7 @@ class _NotifListWidgetState extends State<NotifListWidget> {
               color: FlutterFlowTheme.of(context).secondaryBackground,
             ),
             child: ParseLiveListWidget<ParseObject>(
+                lazyLoading: lzloading,
                 query: QueryBuilder<ParseObject>(ParseObject('CallLogs'))
                   ..whereNotEqualTo("owner", ParseService.currentUser.username)
                   ..orderByDescending('createdAt'),

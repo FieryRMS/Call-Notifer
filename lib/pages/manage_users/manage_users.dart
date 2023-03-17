@@ -108,108 +108,126 @@ class _ManageUsersWidgetState extends State<ManageUsersWidget> {
             decoration: BoxDecoration(
               color: FlutterFlowTheme.of(context).secondaryBackground,
             ),
-            child: FutureBuilder<List<String>>(
-                future: _model.usernamesFuture,
-                builder: (ctx, snapshot) {
-                  if (snapshot.hasError) {
-                    final error = snapshot.error;
-                    if (error is ParseError &&
-                        error.code == ParseError.invalidSessionToken) {
-                      ParseService.logout();
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/login_page', (r) => false);
+            child: RefreshIndicator(
+              onRefresh: () async {
+                setState(() {
+                  _model.usernamesFuture = ParseService.getSubscribedUsers();
+                });
+              },
+              child: FutureBuilder<List<String>>(
+                  future: _model.usernamesFuture,
+                  builder: (ctx, snapshot) {
+                    if (snapshot.hasError) {
+                      final error = snapshot.error;
+                      if (error is ParseError &&
+                          error.code == ParseError.invalidSessionToken) {
+                        ParseService.logout();
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/login_page', (r) => false);
+                      }
+                      WidgetsBinding.instance.addPostFrameCallback((_) =>
+                          showSnackbar(
+                              context,
+                              (error is ParseError
+                                  ? error.message
+                                  : error.toString())));
+                      return const Center(
+                          child: Text(
+                        'something went wrong!',
+                        style: TextStyle(color: Colors.red),
+                      ));
                     }
-                    WidgetsBinding.instance.addPostFrameCallback((_) =>
-                        showSnackbar(
-                            context,
-                            (error is ParseError
-                                ? error.message
-                                : error.toString())));
-                    return const Center(
-                        child: Text(
-                      'something went wrong!',
-                      style: TextStyle(color: Colors.red),
-                    ));
-                  }
-                  if (!snapshot.hasData) {
-                    return Center(
-                        child: Text("No call logs found!",
-                            textAlign: TextAlign.center,
-                            style: FlutterFlowTheme.of(ctx).title1));
-                  }
-                  final usernames = snapshot.data!;
-                  if (usernames.isEmpty) {
-                    return Center(
-                        child: Text("No users subscribed!",
-                            textAlign: TextAlign.center,
-                            style: FlutterFlowTheme.of(ctx).title1));
-                  }
-                  return ListView.builder(
-                      padding: EdgeInsets.zero,
-                      scrollDirection: Axis.vertical,
-                      itemCount: usernames.length,
-                      itemBuilder: (context, idx) {
-                        final username = usernames[idx];
-                        return Card(
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          color:
-                              FlutterFlowTheme.of(context).secondaryBackground,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      5, 0, 0, 0),
-                                  child: Text(
-                                    username,
-                                    style:
-                                        FlutterFlowTheme.of(context).bodyText1,
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    final usernames = snapshot.data!;
+                    if (usernames.isEmpty) {
+                      return LayoutBuilder(
+                          builder: (context, constraints) =>
+                              SingleChildScrollView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  child: SizedBox(
+                                    height: constraints.maxHeight,
+                                    child: Center(
+                                        child: Text("No users subscribed!",
+                                            textAlign: TextAlign.center,
+                                            style: FlutterFlowTheme.of(ctx)
+                                                .title1)),
+                                  )));
+                    }
+                    return ListView.builder(
+                        padding: EdgeInsets.zero,
+                        scrollDirection: Axis.vertical,
+                        itemCount: usernames.length,
+                        itemBuilder: (context, idx) {
+                          final username = usernames[idx];
+                          return Card(
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            color: FlutterFlowTheme.of(context)
+                                .secondaryBackground,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            5, 0, 0, 0),
+                                    child: Text(
+                                      username,
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyText1,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              FlutterFlowIconButton(
-                                borderColor: Colors.transparent,
-                                borderRadius: 30,
-                                borderWidth: 1,
-                                buttonSize: 60,
-                                icon: Icon(
-                                  Icons.delete,
-                                  color: FlutterFlowTheme.of(context).alternate,
-                                  size: 30,
-                                ),
-                                onPressed: () async {
-                                  final navigator = Navigator.of(context);
-                                  final response = await getDialogResponse(
-                                      context, username);
-                                  if (response == true) {
-                                    try {
-                                      await ParseService.unsubscribeUser(
-                                          username);
-                                    } catch (e) {
-                                      WidgetsBinding.instance
-                                          .addPostFrameCallback((_) =>
-                                              showSnackbar(
-                                                  context, e.toString()));
-                                      if (e is ParseError &&
-                                          e.code ==
-                                              ParseError.invalidSessionToken) {
-                                        ParseService.logout();
-                                        navigator.pushNamedAndRemoveUntil(
-                                            '/login_page', (r) => false);
+                                FlutterFlowIconButton(
+                                  borderColor: Colors.transparent,
+                                  borderRadius: 30,
+                                  borderWidth: 1,
+                                  buttonSize: 60,
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color:
+                                        FlutterFlowTheme.of(context).alternate,
+                                    size: 30,
+                                  ),
+                                  onPressed: () async {
+                                    final navigator = Navigator.of(context);
+                                    final response = await getDialogResponse(
+                                        context, username);
+                                    if (response == true) {
+                                      try {
+                                        await ParseService.unsubscribeUser(
+                                            username);
+                                      } catch (e) {
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) =>
+                                                showSnackbar(
+                                                    context, e.toString()));
+                                        if (e is ParseError &&
+                                            e.code ==
+                                                ParseError
+                                                    .invalidSessionToken) {
+                                          ParseService.logout();
+                                          navigator.pushNamedAndRemoveUntil(
+                                              '/login_page', (r) => false);
+                                        }
                                       }
+                                      setState(() {
+                                        usernames.remove(username);
+                                      });
                                     }
-                                    setState(() {
-                                      usernames.remove(username);
-                                    });
-                                  }
-                                },
-                              )
-                            ],
-                          ),
-                        );
-                      });
-                }),
+                                  },
+                                )
+                              ],
+                            ),
+                          );
+                        });
+                  }),
+            ),
           ),
         ),
       ),
