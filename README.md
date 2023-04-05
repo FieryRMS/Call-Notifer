@@ -2,6 +2,13 @@
 
 An app that will notifer the users about calls of other users
 
+## issues
+
+- I am not sure how to imeplement the [call screening service](https://developer.android.com/reference/android/telecom/CallScreeningService) for android. Specifically the [Becoming the CallScreeningService](https://developer.android.com/reference/android/telecom/CallScreeningService#becoming-the-callscreeningservice) section.
+- I dont have an iphone to test the app on it.
+
+The only part that's left to implement is the logging of the calls and notification feature.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
